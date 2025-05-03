@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- <script>
+        var a=10;
+        var b=20;
+        function fun(a,b,add,mul,sub) {
+            function add() {
+            var result = a + b;
+            console.log("Addition: " + result);
+            alert("Addition: " + result);
+            }
+    
+            function sub() {
+            var result = a - b;
+            console.log("Subtraction: " + result);
+            alert("Subtraction: " + result);
+            }
+    
+            function mul() {
+            var result = a * b;
+            console.log("Multiplication: " + result);
+            alert("Multiplication: " + result);
+            }
+         }
+         fun();
+    </script> -->
+    <!-- <script>
+        var a = 10;
+        var b = 20;
+      
+        function fun() {
+          function add() {
+            var result = a + b;
+            console.log("Addition: " + result);
+          }
+      
+          function sub() {
+            var result = a - b;
+            console.log("Subtraction: " + result);
+          }
+      
+          function mul() {
+            var result = a * b;
+            console.log("Multiplication: " + result);
+          }
+          add();
+          sub();
+          mul();
+        }
+        fun();
+      </script>       -->
+      <script>
+        var a = 10;
+        var b = 20;
+    
+        function add(a, b) {
+            var result = a + b;
+            console.log("Addition: " + result);
+        }
+    
+        function sub(a, b) {
+            var result = a - b;
+            console.log("Subtraction: " + result);
+        }
+    
+        function mul(a, b) {
+            var result = a * b;
+            console.log("Multiplication: " + result);
+        }
+        function fun(a, b, addFn, subFn, mulFn) {
+            addFn(a, b);
+            subFn(a, b);
+            mulFn(a, b);
+        }
+        fun(a, b, add, sub, mul);
+    </script>    
+</head>
+<body>
+
+</body>
+</html>
