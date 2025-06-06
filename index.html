@@ -1,9 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Employee Search</title>
+  <title>Employee Search & Edit</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #eee;
+    }
+    input[type="text"] {
+      padding: 6px;
+      width: 200px;
+    }
+    .edit-btn, .save-btn {
+      padding: 5px 10px;
+      margin: 2px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .edit-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .save-btn {
+      background-color: #2196F3;
+      color: white;
+    }
+  </style>
   <script>
-    var empList = [
+    let empList = [
       { empId: "TMF1011", firstName: "Antony", lastName: "David", designation: "Manager", empAge: "42", phno: "7698790", email: "lee@gmail.com" },
       { empId: "TMF1012", firstName: "Martin", lastName: "Luther", designation: "Lead", empAge: "36", phno: "673547879", email: "martin@gmail.com" },
       { empId: "TMF1013", firstName: "Sara", lastName: "Jones", designation: "Developer", empAge: "30", phno: "9876543210", email: "sara@gmail.com" },
@@ -17,83 +50,92 @@
       { empId: "TMF1021", firstName: "Jessica", lastName: "Hall", designation: "Developer", empAge: "31", phno: "8877996655", email: "jessica@gmail.com" }
     ];
 
-    function allowOnlyNumbers(event) {
-      var char = event.which ? event.which : event.keyCode;
-      if (char > 31 && (char < 48 || char > 57)) {
-        event.preventDefault();
-      }
-    }
-
-    function doSearch() {
-      const empId = document.getElementById("empId").value.toLowerCase();
-      const fName = document.getElementById("empFirstName").value.toLowerCase();
-      const lName = document.getElementById("empLastName").value.toLowerCase();
-      const empAge = document.getElementById("empAge").value.trim();
-      const designation = document.getElementById("empDesig").value.toLowerCase();
-      const phno = document.getElementById("empPhNo").value.trim();
-      const email = document.getElementById("empEmail").value.toLowerCase();
-
-      if (empAge && isNaN(empAge)) {
-        alert("Please enter a valid number for age.");
-        return;
-      }
-      if (phno && isNaN(phno)) {
-        alert("Phone number should contain only numbers.");
-        return;
-      }
-
-      const filtered = empList.filter(emp => {
-        return (!empId || emp.empId.toLowerCase().includes(empId)) &&
-               (!fName || emp.firstName.toLowerCase().startsWith(fName)) &&
-               (!lName || emp.lastName.toLowerCase().startsWith(lName)) &&
-               (!empAge || emp.empAge === empAge) &&
-               (!designation || emp.designation.toLowerCase().includes(designation)) &&
-               (!phno || emp.phno === phno) &&
-               (!email || emp.email.toLowerCase() === email);
-      });
-
-      renderTable(filtered);
-    }
-
     function renderTable(data) {
       const div = document.getElementById("empListTable");
       div.innerHTML = "";
 
       if (data.length === 0) {
-        div.innerHTML = "<p style='color:red;'>No records found</p>";
+        div.innerHTML = "<p style='color:red;'> No records found </p>";
         return;
       }
 
       const table = document.createElement("table");
-      table.style.borderCollapse = "collapse";
-      table.style.width = "100%";
 
-      const headers = ["Emp ID", "First Name", "Last Name", "Designation", "Age", "Phone", "Email"];
+      const headers = ["Emp ID", "First Name", "Last Name", "Designation", "Age", "Phone", "Email", "Action"];
       const headRow = document.createElement("tr");
       headers.forEach(h => {
         const th = document.createElement("th");
         th.innerText = h;
-        th.style.padding = "8px";
-        th.style.border = "1px solid #ccc";
-        th.style.backgroundColor = "white";
-        th.style.color = "black";
         headRow.appendChild(th);
       });
       table.appendChild(headRow);
 
-      data.forEach(emp => {
+      data.forEach((emp, index) => {
         const row = document.createElement("tr");
         Object.values(emp).forEach(val => {
           const td = document.createElement("td");
           td.innerText = val;
-          td.style.padding = "8px";
-          td.style.border = "1px solid #ccc";
           row.appendChild(td);
         });
+
+        const actionTd = document.createElement("td");
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.className = "edit-btn";
+        editBtn.onclick = () => editRow(row, index);
+        actionTd.appendChild(editBtn);
+        row.appendChild(actionTd);
+
         table.appendChild(row);
       });
 
       div.appendChild(table);
+    }
+
+    function editRow(row, index) {
+      const emp = empList[index];
+      const cells = row.querySelectorAll("td");
+
+      cells[0].innerHTML = `<input type="text" value="${emp.empId}" />`;
+      cells[1].innerHTML = `<input type="text" value="${emp.firstName}" />`;
+      cells[2].innerHTML = `<input type="text" value="${emp.lastName}" />`;
+      cells[3].innerHTML = `<input type="text" value="${emp.designation}" />`;
+      cells[4].innerHTML = `<input type="number" value="${emp.empAge}" />`;
+      cells[5].innerHTML = `<input type="text" value="${emp.phno}" />`;
+      cells[6].innerHTML = `<input type="email" value="${emp.email}" />`;
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Save";
+      saveBtn.className = "save-btn";
+      saveBtn.onclick = () => saveRow(row, index);
+      cells[7].innerHTML = "";
+      cells[7].appendChild(saveBtn);
+    }
+
+    function saveRow(row, index) {
+      const inputs = row.querySelectorAll("input");
+      const updated = {
+        empId: inputs[0].value.trim(),
+        firstName: inputs[1].value.trim(),
+        lastName: inputs[2].value.trim(),
+        designation: inputs[3].value.trim(),
+        empAge: inputs[4].value.trim(),
+        phno: inputs[5].value.trim(),
+        email: inputs[6].value.trim()
+      };
+
+      empList[index] = updated;
+      renderTable(empList);
+    }
+
+    function globalSearch() {
+      const query = document.getElementById("globalSearch").value.toLowerCase();
+      const filtered = empList.filter(emp =>
+        Object.values(emp).some(val =>
+          val.toLowerCase().includes(query)
+        )
+      );
+      renderTable(filtered);
     }
 
     window.onload = function () {
@@ -102,30 +144,15 @@
   </script>
 </head>
 <body>
-  <table>
-    <tr>
-      <td>EmpID:</td><td><input type="text" id="empId" /></td>
-      <td>First Name:</td><td><input type="text" id="empFirstName" /></td>
-      <td>Last Name:</td><td><input type="text" id="empLastName" /></td>
-    </tr>
-    <tr>
-      <td>Age:</td><td><input type="text" id="empAge" onkeypress="allowOnlyNumbers(event)" /></td>
-      <td>Designation:</td><td><input type="text" id="empDesig" /></td>
-      <td>Phone No:</td><td><input type="text" id="empPhNo" onkeypress="allowOnlyNumbers(event)" /></td>
-    </tr>
-    <tr>
-      <td>Email:</td><td><input type="text" id="empEmail" /></td>
-    </tr>
-    <tr><td colspan="4" align="middle"><button onclick="doSearch()">Search</button></td></tr>
-  </table>
-  <br />
+  <h2>Employee Directory</h2>
+
+  <label>Search:</label>
+  <input type="text" id="globalSearch" onkeyup="globalSearch()" placeholder="Search by any field" />
+  <br /><br />
+
   <div id="empListTable"></div>
 </body>
 </html>
-
-
-
-
 
 <!-- 
 <html>
